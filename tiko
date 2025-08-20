@@ -1,0 +1,39 @@
+import requests
+from telethon import TelegramClient
+
+def check_tiktok_account_available(username):
+    api_url = f"https://api.tiktok.com/oauth/user_info/?username={username}"
+    
+    try:
+        response = requests.get(api_url)
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Error checking TikTok account: {str(e)}")
+        return None
+
+def send_message_to_telegram(token, api_id, api_hash, message):
+    client = TelegramClient("session", api_id, api_hash)
+    
+    try:
+        with client:
+            result = client(functions.messages.SendMessageRequest(
+                peer="me",
+                message=message
+            ))
+            return True
+    except Exception as e:
+        print(f"Error sending message: {str(e)}")
+        return False
+
+if __name__ == "__main__":
+    username = "example_tiktok_user"
+    api_id = 1234567
+    api_hash = "your_api_hash_here"
+    message = "TikTok account available!"
+
+    is_available = check_tiktok_account_available(username)
+    if is_available:
+        send_message_to_telegram("your_token_here", api_id, api_hash, message)
+        print("Message sent successfully!")
+    else:
+        print("Account not found or unavailable.")
