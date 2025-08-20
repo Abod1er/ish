@@ -1,0 +1,64 @@
+import telebot
+import phonenumbers
+from telebot import types
+from phonenumbers import geocoder 
+from phonenumbers import carrier
+from phonenumbers import timezone
+
+token=" "
+
+bot=telebot.TeleBot(token)
+
+@bot.message_handler(commands=["start"])
+def mes(mes):
+ name=mes.from_user.full_name
+ but1=types.InlineKeyboardButton("بــــدء - START ✅",callback_data="a1")
+ but2=types.InlineKeyboardButton("الـــمــطــور 👷",url="t.me/O23_k")
+ mark=types.InlineKeyboardMarkup(row_width=1)
+ mark.add(but1,but2)
+ bot.send_message(mes.chat.id,f"*اهــلا بك فـي البـوت {name}\nلــ بــدء البــوت اضــغط بــدء او START \nو مراســلة المطـور اضغط علـى الـــمــطــور👷*",parse_mode="markdown",reply_markup=mark)
+
+@bot.callback_query_handler(func=lambda call:True)
+
+def cl(call):
+ if call.data == "a1":
+  idet=bot.edit_message_text("حسناً أهـــلا بك في بــوت كــشف الأرقــام\nيرجىٰ ارســال الرقــم مــع رمــز الدولة\nمــثـال:\n+9647701234567",chat_id=call.from_user.id, message_id=call.message.id)
+  bot.register_next_step_handler(idet,messa)
+def messa(message):
+ text=message.text
+ number=text
+ phone=phonenumbers.parse(number)
+ country=geocoder.description_for_number(phone , "ar")
+ country2=geocoder.description_for_number(phone , "en")
+ valid = phonenumbers.is_valid_number(phone)
+ passible = phonenumbers.is_possible_number(phone)
+ 
+ service=carrier.name_for_number(phone , "en")
+ spe=timezone.time_zones_for_number(phone)
+ print(country)
+ print(service)
+ print(spe)
+ but3=types.InlineKeyboardButton("الــمسـاعدة - Help 🛡️",url="t.me/O23_k")
+ mark3=types.InlineKeyboardMarkup()
+ mark3.add(but3)
+ ountry=country+"/"+country2
+ bot.send_message(message.chat.id,f"""
+ *ألــنـتائـج التـي تــم العثور علـيها لــ هذا الــرقم
+{number}
+
+country / الــبلد 🌍 : {ountry}
+𓄲𓄳𓄴𓄵𓄲𓄳𓄴𓄵𓄲𓄳𓄴𓄵
+Company / 📩الــشركة : {service}
+𓄲𓄳𓄴𓄵𓄲𓄳𓄴𓄵𓄲𓄳𓄴𓄵
+rate / صــحـة الــرقم🔰 : {passible}
+𓄲𓄳𓄴𓄵𓄲𓄳𓄴𓄵𓄲𓄳𓄴𓄵
+Number/الــرقم صحيــح بـ نسـبـة🦂: {valid}
+𓄲𓄳𓄴𓄵𓄲𓄳𓄴𓄵𓄲𓄳𓄴𓄵
+The site / الــمـوقع 🎃: {spe}
+𓄲𓄳𓄴𓄵𓄲𓄳𓄴𓄵𓄲𓄳𓄴𓄵*
+ """,parse_mode="markdown",reply_markup=mark3)
+import time 
+print("\t Reeding....... ! ")
+time.sleep(0.5)
+print("\t Go to the yuor BOT ..... ")
+bot.infinity_polling()
