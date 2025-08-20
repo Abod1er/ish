@@ -1,0 +1,16 @@
+import requests
+
+def check_tiktok_account_available(username):
+    url = f"https://www.tiktok.com/@{username}"
+    
+    try:
+        response = requests.get(url)
+        return response.status_code == 200
+    except requests.RequestException:
+        return False
+
+# Example usage
+account_name = "example_account"
+is_available = check_tiktok_account_available(account_name)
+
+print(f"The TikTok account '{account_name}' is {'available' if is_available else 'not available'}")
